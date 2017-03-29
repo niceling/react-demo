@@ -1,12 +1,12 @@
 import React, {Component} from 'react'
 import config from './config.json';
-import styles from './style/Greeter.css';//µ¼Èë
+import styles from './style/Greeter.css';//ï¿½ï¿½ï¿½ï¿½
 
 class Greeter extends Component{
   render() {
     return (
       <div className={styles.root}>
-        {config.helloText}
+        {config.greetText}
       </div>
     );
   }
