@@ -9,5 +9,7 @@ webpack的不同环境的打包配置：https://github.com/vikingmute/webpack-fo
 
 react脚手架：https://github.com/bodyno/react-starter-kit
 
-
-
+安装说明：
+ 
+ 进入项目根目录：在命令行中执行 yarn install 
+ 启动项目：在命令行中执行 yarn run dev
