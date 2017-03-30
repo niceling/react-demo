@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import config from './config.json';
-import styles from './style/Greeter.css';//����
+var styles=require('./style/Greeter.css');//使用require导入css文件
 
 class Greeter extends Component{
   render() {

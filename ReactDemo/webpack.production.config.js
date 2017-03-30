@@ -1,34 +1,63 @@
 var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var autoprefixer = require('autoprefixer');
+
+var path = require('path');
+//å®šä¹‰äº†ä¸€äº›æ–‡ä»¶å¤¹çš„è·¯å¾„
+var ROOT_PATH = path.resolve(__dirname);
+var APP_PATH = path.resolve(ROOT_PATH, 'app');
+var BUILD_PATH = path.resolve(ROOT_PATH, 'build');
+var PUBLISH_PATH = path.resolve(ROOT_PATH, 'dist');
 
 module.exports = {
-		devtool: 'eval-source-map',
     entry:{
-    	app:["./app/main.js"]
+    	app:["./app/main.js"],
+    	vendors: ['jquery']
     },
     output: {
-        path: __dirname + "/build",
+        path: PUBLISH_PATH,
         filename: "bundle.js"
     },
      module: {
-        //loaders¼ÓÔØÆ÷
+        //loadersåŠ è½½å™¨
         loaders: [
-            {test: /\.(js|jsx)$/,loader: 'babel-loader',exclude: /node_modules/},
-            {test: /\.json$/,loader: "json-loader"},
-			      {test: /\.css$/,loader: 'style-loader!css-loader?modules'}//Ìí¼Ó¶ÔÑùÊ½±íµÄ´¦Àí  ¸ĞÌ¾ºÅµÄ×÷ÓÃÔÚÓÚÊ¹Í¬Ò»ÎÄ¼şÄÜ¹»Ê¹ÓÃ²»Í¬ÀàĞÍµÄloader
+            {test: /\.(js|jsx)$/,loader: 'babel-loader',exclude: /node_modules/},//js|jsxåŠ è½½å™¨
+            {test: /\.json$/,loader: "json-loader"},//jsonåŠ è½½å™¨
+			{test: /\.css$/,loader:ExtractTextPlugin.extract({ fallback: 'style-loader',use:'css-loader?modules!postcss-loader'}),include:APP_PATH},//æ·»åŠ å¯¹æ ·å¼è¡¨çš„å¤„ç†  æ„Ÿå¹å·çš„ä½œç”¨åœ¨äºä½¿åŒä¸€æ–‡ä»¶èƒ½å¤Ÿä½¿ç”¨ä¸åŒç±»å‹çš„loader
+        	{test: /\.(png|jpg)$/,loader: 'file-loader?limit=40000&name=images/[hash:8].[name].[ext]'}//æ³¨æ„åé¢é‚£ä¸ªlimitçš„å‚æ•°ï¼Œå½“ä½ å›¾ç‰‡å¤§å°å°äºè¿™ä¸ªé™åˆ¶çš„æ—¶å€™ï¼Œä¼šè‡ªåŠ¨å¯ç”¨base64ç¼–ç å›¾ç‰‡ã€‚
         ]
     },
      plugins:[
+     	new webpack.BannerPlugin('Created by MiRai on 17/03/30. Email:410053434@qq.com'),
         new webpack.HotModuleReplacementPlugin(),
-        new HtmlWebpackPlugin({template: __dirname + "/app/template/index.tmpl.html"})//new Ò»¸öÕâ¸ö²å¼şµÄÊµÀı£¬²¢´«ÈëÏà¹ØµÄ²ÎÊı
-    
-    ],
-    //webpack-dev-serverÅäÖÃ
-    devServer: {
-        contentBase: './build',//Ä¬ÈÏwebpack-dev-server»áÎª¸ùÎÄ¼ş¼ĞÌá¹©±¾µØ·şÎñÆ÷£¬Èç¹ûÏëÎªÁíÍâÒ»¸öÄ¿Â¼ÏÂµÄÎÄ¼şÌá¹©±¾µØ·şÎñÆ÷£¬Ó¦¸ÃÔÚÕâÀïÉèÖÃÆäËùÔÚÄ¿Â¼£¨±¾ÀıÉèÖÃµ½"build"Ä¿Â¼£©
-        historyApiFallback: true,//ÔÚ¿ª·¢µ¥Ò³Ó¦ÓÃÊ±·Ç³£ÓĞÓÃ£¬ËüÒÀÀµÓÚHTML5 history API£¬Èç¹ûÉèÖÃÎªtrue£¬ËùÓĞµÄÌø×ª½«Ö¸Ïòindex.html
-        inline: true,//ÉèÖÃÎªtrue£¬µ±Ô´ÎÄ¼ş¸Ä±äÊ±»á×Ô¶¯Ë¢ĞÂÒ³Ãæ
-        port: 8030,//ÉèÖÃÄ¬ÈÏ¼àÌı¶Ë¿Ú£¬Èç¹ûÊ¡ÂÔ£¬Ä¬ÈÏÎª"8080"
-        hot: true
-    }
+        new HtmlWebpackPlugin({template: ROOT_PATH + "/app/template/index.tmpl.html"}),//new ä¸€ä¸ªè¿™ä¸ªæ’ä»¶çš„å®ä¾‹ï¼Œå¹¶ä¼ å…¥ç›¸å…³çš„å‚æ•°
+        new webpack.optimize.OccurrenceOrderPlugin(),//ä¸ºç»„ä»¶åˆ†é…IDï¼Œé€šè¿‡è¿™ä¸ªæ’ä»¶webpackå¯ä»¥åˆ†æå’Œä¼˜å…ˆè€ƒè™‘ä½¿ç”¨æœ€å¤šçš„æ¨¡å—ï¼Œå¹¶ä¸ºå®ƒä»¬åˆ†é…æœ€å°çš„ID
+        new webpack.optimize.UglifyJsPlugin(),//å‹ç¼©JSä»£ç ï¼›
+        new webpack.LoaderOptionsPlugin({
+			options : {
+				postcss : function(){return [autoprefixer];}
+			}
+		}),
+		new ExtractTextPlugin("[name]-[hash:8].css"),
+		//æŠŠå…¥å£æ–‡ä»¶é‡Œé¢çš„æ•°ç»„æ‰“åŒ…æˆverdors.js
+    	new webpack.optimize.CommonsChunkPlugin({ name: 'vendors', filename: 'vendors.js' })
+	],
+  	
+  	//webpack-dev-serveré…ç½®
+	devServer:{
+	    contentBase: './build',//é»˜è®¤webpack-dev-serverä¼šä¸ºæ ¹æ–‡ä»¶å¤¹æä¾›æœ¬åœ°æœåŠ¡å™¨ï¼Œå¦‚æœæƒ³ä¸ºå¦å¤–ä¸€ä¸ªç›®å½•ä¸‹çš„æ–‡ä»¶æä¾›æœ¬åœ°æœåŠ¡å™¨ï¼Œåº”è¯¥åœ¨è¿™é‡Œè®¾ç½®å…¶æ‰€åœ¨ç›®å½•ï¼ˆæœ¬ä¾‹è®¾ç½®åˆ°"build"ç›®å½•ï¼‰
+	    historyApiFallback: true,//åœ¨å¼€å‘å•é¡µåº”ç”¨æ—¶éå¸¸æœ‰ç”¨ï¼Œå®ƒä¾èµ–äºHTML5 history APIï¼Œå¦‚æœè®¾ç½®ä¸ºtrueï¼Œæ‰€æœ‰çš„è·³è½¬å°†æŒ‡å‘index.html
+	    inline: true,//è®¾ç½®ä¸ºtrueï¼Œå½“æºæ–‡ä»¶æ”¹å˜æ—¶ä¼šè‡ªåŠ¨åˆ·æ–°é¡µé¢
+	    port: 8030,//è®¾ç½®é»˜è®¤ç›‘å¬ç«¯å£ï¼Œå¦‚æœçœç•¥ï¼Œé»˜è®¤ä¸º"8080"
+	    hot: true,
+	    //å…¶å®å¾ˆç®€å•çš„ï¼Œåªè¦é…ç½®è¿™ä¸ªå‚æ•°å°±å¯ä»¥äº†
+        proxy: {
+          '/api/*': {
+              target: 'http://localhost:5000',
+              secure: false
+          }
+        }
+	}
+  	
 };
