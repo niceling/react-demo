@@ -5,6 +5,8 @@
 
 这篇文章里面有比较详细的构建文档：https://segmentfault.com/a/1190000006178770#articleHeader6
 
+postcss的作用：http://www.ibm.com/developerworks/cn/web/1604-postcss-css/
+
 webpack的不同环境的打包配置：https://github.com/vikingmute/webpack-for-fools/blob/master/entries/chapter-2.md
 
 react脚手架：https://github.com/bodyno/react-starter-kit
